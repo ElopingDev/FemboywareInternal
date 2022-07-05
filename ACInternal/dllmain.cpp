@@ -13,7 +13,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
     FILE * f;
     freopen_s(&f, "CONOUT$", "w", stdout);
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-
+    SetConsoleTitleW(L"Femboyware : AssaultCube Edition");
     SetConsoleTextAttribute(h, 3);
     std::cout << "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n";
     std::cout << "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n";
