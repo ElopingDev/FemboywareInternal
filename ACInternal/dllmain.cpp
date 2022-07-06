@@ -47,7 +47,8 @@ DWORD WINAPI HackThread(HMODULE hModule)
     std::cout << "Infinite Health : NUMPAD 1\n";
     std::cout << "Infinite Ammo : NUMPAD 2\n";
     std::cout << "No Recoil : NUMPAD 3\n";
-    std::cout << "NoClip : NUMPAD 4\n";
+    std::cout << "NoClip : C Key\n";
+    std::cout << "RapidFire : NUMPAD 4\n";
     std::cout << "Uninject : END\n";
 
     
@@ -58,7 +59,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
     //get module base
     uintptr_t moduleBase = (uintptr_t)GetModuleHandle(L"ac_client.exe"), recoilAddr1 = 0x56bf8e, recoilAddr2 = 0x56bf90;
 
-    bool bHealth = false, bAmmo = false, bInvis = false, bNoClip = false, bRecoil = false, bClip = false, set_once = false;
+    bool bHealth = false, bAmmo = false, bInvis = false, bNoClip = false, bFireRate = false, bRecoil = false, bClip = false, set_once = false;
     
     const int recoilValue = 0;
     const int oldRecoil1 = 25;
@@ -96,6 +97,11 @@ DWORD WINAPI HackThread(HMODULE hModule)
         }
 
         if (GetAsyncKeyState(VK_NUMPAD4) & 1)
+        {
+            bFireRate = !bFireRate;
+        }
+
+        if (GetAsyncKeyState(0x43) & 1)
         {
             bNoClip = !bNoClip;
             set_once = true;
@@ -156,6 +162,20 @@ DWORD WINAPI HackThread(HMODULE hModule)
             else
             {
                 mem::Patch((BYTE*)(moduleBase + 0xC73EF), (BYTE*)"\xFF\x08", 2);
+
+            }
+
+            if (bFireRate)
+            {
+                bAmmo = false;
+                mem::Patch((BYTE*)(moduleBase + 0xC73EA), (BYTE*)"\x90", 1);
+                
+
+
+            }
+            else
+            {
+                mem::Patch((BYTE*)(moduleBase + 0xC73EA), (BYTE*)"\x89\x08", 2);
 
             }
 
