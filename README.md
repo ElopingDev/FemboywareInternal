@@ -15,5 +15,5 @@ TODO LIST / GOALS
 - [ ] Godmode (works online)
 - [ ] Aimbot
 - [ ] ESP
-- [ ] Rapidfire
+- [x] Rapidfire
 
