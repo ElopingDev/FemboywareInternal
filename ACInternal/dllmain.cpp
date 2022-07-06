@@ -47,33 +47,37 @@ DWORD WINAPI HackThread(HMODULE hModule)
     std::cout << "Infinite Health : NUMPAD 1\n";
     std::cout << "Infinite Ammo : NUMPAD 2\n";
     std::cout << "No Recoil : NUMPAD 3\n";
+    std::cout << "NoClip : NUMPAD 4\n";
     std::cout << "Uninject : END\n";
 
     
 
 
+
+
     //get module base
     uintptr_t moduleBase = (uintptr_t)GetModuleHandle(L"ac_client.exe"), recoilAddr1 = 0x56bf8e, recoilAddr2 = 0x56bf90;
 
-    bool bHealth = false, bAmmo = false, bRecoil = false;
+    bool bHealth = false, bAmmo = false, bInvis = false, bNoClip = false, bRecoil = false, bClip = false;
     
     const int recoilValue = 0;
     const int oldRecoil1 = 25;
     const int oldRecoil2 = 50;
-
+    
     //hack loop
     while(true)
     {
         //key input
 
+       
         if (GetAsyncKeyState(VK_END) & 1)
         {
-            
             fclose(f);
             FreeConsole();
             FreeLibraryAndExitThread(hModule, 0);
             return 0;
         }
+
 
         if (GetAsyncKeyState(VK_NUMPAD1) & 1)
         {
@@ -89,6 +93,24 @@ DWORD WINAPI HackThread(HMODULE hModule)
         {
             bRecoil = !bRecoil;
         }
+
+        if (GetAsyncKeyState(VK_NUMPAD4) & 1)
+        {
+            bNoClip = !bNoClip;
+        }
+
+        if (GetAsyncKeyState(VK_NUMPAD5) & 1)
+        {
+            bClip = !bClip;
+        }
+
+
+       
+
+      //  if (GetAsyncKeyState(VK_NUMPAD4) & 1)
+      //  {
+       //     bNoClip = !bNoClip;
+       // }
 
        
         //freeze
@@ -107,6 +129,16 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
             }
 
+            if (bNoClip)
+            {
+                *(int*)(*localPlayerPtr + 0x76) = 4;
+
+            }
+            if(bClip)
+                *(int*)(*localPlayerPtr + 0x76) = 0;
+
+
+
             if (bAmmo)
             {
                 mem::Patch((BYTE*)(moduleBase + 0xC73EF), (BYTE*)"\xFF\x00", 2);
@@ -117,6 +149,11 @@ DWORD WINAPI HackThread(HMODULE hModule)
                 mem::Patch((BYTE*)(moduleBase + 0xC73EF), (BYTE*)"\xFF\x08", 2);
 
             }
+
+
+            
+           
+            
 
             if (bRecoil)
             {
