@@ -58,11 +58,12 @@ DWORD WINAPI HackThread(HMODULE hModule)
     //get module base
     uintptr_t moduleBase = (uintptr_t)GetModuleHandle(L"ac_client.exe"), recoilAddr1 = 0x56bf8e, recoilAddr2 = 0x56bf90;
 
-    bool bHealth = false, bAmmo = false, bInvis = false, bNoClip = false, bRecoil = false, bClip = false;
+    bool bHealth = false, bAmmo = false, bInvis = false, bNoClip = false, bRecoil = false, bClip = false, set_once = false;
     
     const int recoilValue = 0;
     const int oldRecoil1 = 25;
     const int oldRecoil2 = 50;
+
     
     //hack loop
     while(true)
@@ -88,7 +89,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
         {
             bAmmo = !bAmmo;
         }
-
+        
         if (GetAsyncKeyState(VK_NUMPAD3) & 1)
         {
             bRecoil = !bRecoil;
@@ -97,12 +98,11 @@ DWORD WINAPI HackThread(HMODULE hModule)
         if (GetAsyncKeyState(VK_NUMPAD4) & 1)
         {
             bNoClip = !bNoClip;
+            set_once = true;
+
         }
 
-        if (GetAsyncKeyState(VK_NUMPAD5) & 1)
-        {
-            bClip = !bClip;
-        }
+       
 
 
        
@@ -116,14 +116,13 @@ DWORD WINAPI HackThread(HMODULE hModule)
         //freeze
         uintptr_t* localPlayerPtr = (uintptr_t*)(moduleBase + 0x17E0A8);
 
-        if (localPlayerPtr)
-        {
+       
             if (bHealth)
             {
                 *(int*)(*localPlayerPtr + 0xEC) = 696969;
 
             }
-            else
+            if(!bHealth)
             {
                 *(int*)(*localPlayerPtr + 0xEC) = 100;
 
@@ -131,11 +130,21 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
             if (bNoClip)
             {
-                *(int*)(*localPlayerPtr + 0x76) = 4;
-
+                if (set_once) {
+                    *(int*)(*localPlayerPtr + 0x76) = 4;
+                    set_once = false;
+                }
             }
-            if(bClip)
-                *(int*)(*localPlayerPtr + 0x76) = 0;
+            else
+            {
+                if (set_once) {
+                    *(int*)(*localPlayerPtr + 0x76) = 0;
+                    set_once = false;
+
+                }
+            }
+
+            
 
 
 
@@ -181,7 +190,7 @@ DWORD WINAPI HackThread(HMODULE hModule)
 
 
     //cleanup & eject
-}
+
 
 
 
